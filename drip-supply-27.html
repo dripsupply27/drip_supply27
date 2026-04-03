@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drip Supply 27</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --black:#0a0a0a; --white:#f9f9f7; --gray:#e8e8e4; --mid:#9a9a96; --yellow:#FFFC00; }
+body { font-family:'DM Sans',sans-serif; background:var(--white); color:var(--black); min-height:100vh; }
+
+nav { position:sticky; top:0; z-index:100; background:var(--white); border-bottom:1px solid var(--gray); padding:0 5vw; display:flex; align-items:center; justify-content:space-between; height:64px; }
+.logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:2px; color:var(--black); text-decoration:none; }
+.nav-right { display:flex; align-items:center; gap:10px; }
+
+.snap-btn { display:flex; align-items:center; gap:7px; background:var(--yellow); color:#000; border:none; border-radius:999px; padding:9px 18px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; transition:opacity .15s; white-space:nowrap; }
+.snap-btn:hover { opacity:.82; }
+
+.tiktok-btn { display:flex; align-items:center; gap:7px; background:var(--black); color:#fff; border:none; border-radius:999px; padding:9px 18px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; transition:opacity .15s; white-space:nowrap; }
+.tiktok-btn:hover { opacity:.75; }
+
+@media(max-width:520px) {
+  .snap-btn span, .tiktok-btn span { display:none; }
+  .snap-btn, .tiktok-btn { padding:9px 12px; }
+}
+
+.hero { padding:56px 5vw 44px; border-bottom:1px solid var(--gray); display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:end; }
+@media(max-width:680px){ .hero { grid-template-columns:1fr; gap:24px; } }
+.hero h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(64px,11vw,120px); line-height:.88; letter-spacing:2px; margin-bottom:18px; }
+.hero p { font-size:15px; color:var(--mid); max-width:380px; line-height:1.7; font-weight:300; }
+.steps { display:flex; flex-direction:column; gap:10px; }
+.step { display:flex; align-items:center; gap:14px; padding:14px 18px; border:1px solid var(--gray); border-radius:12px; }
+.step-num { width:28px; height:28px; border-radius:50%; background:var(--black); color:var(--white); font-size:12px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.step-text { font-size:13px; color:var(--mid); font-weight:300; }
+.step-text strong { color:var(--black); font-weight:500; }
+
+.filter-bar { padding:20px 5vw; display:flex; gap:8px; flex-wrap:wrap; border-bottom:1px solid var(--gray); align-items:center; position:sticky; top:64px; background:var(--white); z-index:90; }
+.filter-label { font-size:11px; color:var(--mid); letter-spacing:1px; text-transform:uppercase; margin-right:4px; }
+.filter-btn { background:none; border:1px solid var(--gray); border-radius:999px; padding:7px 18px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; color:var(--mid); transition:all .15s; }
+.filter-btn:hover, .filter-btn.active { background:var(--black); color:var(--white); border-color:var(--black); }
+
+.section-head { padding:40px 5vw 0; display:flex; align-items:baseline; gap:16px; }
+.section-head h2 { font-family:'Bebas Neue',sans-serif; font-size:36px; letter-spacing:2px; }
+.section-head span { font-size:13px; color:var(--mid); font-weight:300; }
+
+.grid { padding:24px 5vw 20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:24px; }
+
+.product-card { background:var(--white); border:1px solid var(--gray); border-radius:12px; overflow:hidden; transition:box-shadow .2s,transform .2s; }
+.product-card:hover { box-shadow:0 8px 32px rgba(0,0,0,.08); transform:translateY(-2px); }
+
+.slideshow { position:relative; width:100%; aspect-ratio:1/1; overflow:hidden; background:var(--gray); }
+.slides { display:flex; height:100%; transition:transform .35s cubic-bezier(.4,0,.2,1); will-change:transform; }
+.slide { min-width:100%; height:100%; flex-shrink:0; }
+.slide img { width:100%; height:100%; object-fit:cover; display:block; user-select:none; -webkit-user-drag:none; }
+
+.slide-arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.9); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; font-size:14px; color:var(--black); opacity:0; transition:opacity .2s; }
+.product-card:hover .slide-arrow { opacity:1; }
+.slide-arrow.prev { left:8px; }
+.slide-arrow.next { right:8px; }
+.slide-arrow:hover { background:white; }
+
+.slide-dots { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:10; }
+.dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.5); transition:background .2s,transform .2s; }
+.dot.active { background:white; transform:scale(1.3); }
+.slide-counter { position:absolute; top:10px; right:10px; background:rgba(0,0,0,.45); color:white; font-size:11px; padding:3px 9px; border-radius:999px; z-index:10; letter-spacing:.5px; }
+.new-badge { position:absolute; top:10px; left:10px; background:var(--yellow); color:#000; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:4px 10px; border-radius:999px; font-weight:600; z-index:10; }
+
+.card-info { padding:14px 16px 18px; cursor:pointer; }
+.card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.card-name { font-size:15px; font-weight:500; }
+.card-price { font-size:15px; font-weight:500; }
+.card-colour { font-size:12px; color:var(--mid); font-weight:300; text-transform:uppercase; letter-spacing:.5px; margin-bottom:14px; }
+.card-order-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:7px; background:var(--yellow); color:#000; border:none; border-radius:999px; padding:10px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; transition:opacity .15s; }
+.card-order-btn:hover { opacity:.82; }
+
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:300; align-items:center; justify-content:center; padding:16px; }
+.modal-bg.open { display:flex; }
+.modal-wrap { position:relative; width:100%; max-width:960px; }
+.modal-close { position:absolute; top:-16px; right:-16px; background:var(--white); border:1px solid var(--gray); border-radius:50%; width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:22px; color:var(--black); z-index:10; line-height:1; }
+.modal { background:var(--white); border-radius:12px; max-height:90vh; overflow-y:auto; display:grid; grid-template-columns:1.2fr 1fr; }
+@media(max-width:620px){ .modal { grid-template-columns:1fr; } }
+.modal-slideshow { position:relative; width:100%; aspect-ratio:1/1; overflow:hidden; background:var(--gray); border-radius:12px 0 0 12px; }
+@media(max-width:620px){ .modal-slideshow { border-radius:12px 12px 0 0; } }
+.modal-slides { display:flex; height:100%; transition:transform .35s cubic-bezier(.4,0,.2,1); }
+.modal-slide { min-width:100%; height:100%; flex-shrink:0; }
+.modal-slide img { width:100%; height:100%; object-fit:cover; display:block; }
+.modal-arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.9); border:none; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; font-size:16px; color:var(--black); transition:background .15s; }
+.modal-arrow:hover { background:white; }
+.modal-arrow.prev { left:12px; }
+.modal-arrow.next { right:12px; }
+.modal-dots { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:10; }
+.modal-thumbs { display:flex; gap:6px; padding:10px 16px 0; overflow-x:auto; scrollbar-width:none; }
+.modal-thumbs::-webkit-scrollbar { display:none; }
+.thumb { width:52px; height:52px; border-radius:6px; overflow:hidden; flex-shrink:0; cursor:pointer; border:2px solid transparent; transition:border-color .15s; }
+.thumb.active { border-color:var(--black); }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.modal-body { padding:32px 28px; display:flex; flex-direction:column; gap:14px; }
+.modal-cat { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--mid); font-weight:300; }
+.modal-name { font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:1px; line-height:1; }
+.modal-colour { font-size:13px; color:var(--mid); font-weight:300; text-transform:uppercase; letter-spacing:.5px; }
+.modal-price { font-size:22px; font-weight:500; }
+.modal-divider { height:1px; background:var(--gray); }
+.modal-desc { font-size:13px; color:var(--mid); line-height:1.7; font-weight:300; }
+.modal-cta { font-size:13px; color:var(--mid); line-height:1.6; font-weight:300; background:#f5f5f2; padding:12px 14px; border-radius:8px; }
+.modal-snap { display:inline-flex; align-items:center; gap:8px; background:var(--yellow); color:#000; border:none; border-radius:999px; padding:13px 24px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; text-decoration:none; transition:opacity .15s; }
+.modal-snap:hover { opacity:.82; }
+
+footer { border-top:1px solid var(--gray); padding:28px 5vw; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-top:40px; }
+.footer-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; }
+.footer-note { font-size:12px; color:var(--mid); font-weight:300; }
+.footer-socials { display:flex; gap:8px; align-items:center; }
+
+.section-divider { height:1px; background:var(--gray); margin:20px 5vw 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">DRIP SUPPLY 27</a>
+  <div class="nav-right">
+    <a class="tiktok-btn" href="https://www.tiktok.com/@drip_supply27" target="_blank">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.79 1.52V6.75a4.85 4.85 0 0 1-1.02-.06z"/></svg>
+      <span>TikTok</span>
+    </a>
+    <a class="snap-btn" href="https://www.snapchat.com/add/drip_supply27" target="_blank">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 2c-1.417.007-4.265.392-5.9 3.063-.626 1.04-.526 2.8-.476 3.896l-.003.108c-.3.092-.64.137-1.018.137-.356 0-.706-.094-.985-.26-.073-.044-.148-.065-.224-.065-.2 0-.38.144-.418.346-.05.266.13.496.376.578.063.021.134.041.208.062.474.134 1.192.335 1.354 1.105.022.103.03.207.03.31 0 .31-.096.62-.274.894l-.026.038c-.65 1.014-1.73 1.623-2.9 1.623-.178 0-.352-.015-.52-.044-.117-.021-.235.041-.284.148-.05.109-.016.236.082.31 1.01.76 2.14 1.018 3.32 1.252.11.373.265.9.07 1.373-.07.17-.015.368.133.473.05.035.107.053.165.053.07 0 .138-.024.194-.07.41-.33.81-.5 1.186-.5.26 0 .498.07.762.162.424.147.956.33 1.736.33.75 0 1.248-.176 1.66-.316.278-.098.518-.18.792-.18.37 0 .77.168 1.19.5.056.044.123.067.192.067a.25.25 0 0 0 .166-.053c.15-.105.203-.303.134-.473-.195-.473-.04-1 .07-1.373 1.18-.234 2.31-.492 3.32-1.252.098-.074.132-.2.082-.31-.05-.107-.167-.169-.285-.148-.167.029-.34.044-.52.044-1.17 0-2.248-.61-2.898-1.623l-.026-.038c-.178-.274-.275-.584-.275-.894 0-.103.01-.207.03-.31.163-.77.88-.97 1.355-1.105.074-.02.145-.04.208-.062.246-.082.426-.312.376-.578-.038-.202-.218-.346-.418-.346-.076 0-.15.021-.224.065-.28.166-.63.26-.985.26-.378 0-.718-.045-1.018-.137l-.003-.108c.05-1.096.15-2.856-.476-3.896C16.283 2.392 13.435 2.007 12.017 2z"/></svg>
+      <span>Order on Snap</span>
+    </a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <h1>FRESH<br>DROPS.</h1>
+    <p>Browse the latest pieces. Screenshot what you want and message us on Snapchat — we sort payment, sizing and delivery from there.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Browse</strong> the catalogue below</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Screenshot</strong> the item you want</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Send it</strong> to us on Snapchat</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">We sort <strong>payment & delivery</strong></div></div>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <span class="filter-label">Filter</span>
+  <button class="filter-btn active" data-cat="all">All</button>
+  <button class="filter-btn" data-cat="b30">B30</button>
+  <button class="filter-btn" data-cat="b22">B22</button>
+  <button class="filter-btn" data-cat="canada-goose">Canada Goose</button>
+  <button class="filter-btn" data-cat="nike-p6000">Nike P6000</button>
+  <button class="filter-btn" data-cat="moncler">Moncler</button>
+</div>
+
+<!-- Balenciaga B30 -->
+<div class="section-head" id="sec-b30">
+  <h2>Balenciaga B30</h2>
+  <span>Swipe or click arrows to see all angles — €80</span>
+</div>
+<div class="grid" id="grid-b30"></div>
+
+<div class="section-divider" id="div-b30-b22"></div>
+
+<!-- Balenciaga B22 -->
+<div class="section-head" id="sec-b22">
+  <h2>Balenciaga B22</h2>
+  <span>Swipe or click arrows to see all angles — €80</span>
+</div>
+<div class="grid" id="grid-b22"></div>
+
+<div class="section-divider" id="div-b22-cg"></div>
+
+<!-- Canada Goose -->
+<div class="section-head" id="sec-canada-goose">
+  <h2>Canada Goose</h2>
+  <span>Swipe or click arrows to see all angles — €110</span>
+</div>
+<div class="grid" id="grid-canada-goose"></div>
+
+<div class="section-divider" id="div-cg-nike"></div>
+
+<!-- Nike P6000 -->
+<div class="section-head" id="sec-nike-p6000">
+  <h2>Nike P-6000</h2>
+  <span>Swipe or click arrows to see all angles — €75</span>
+</div>
+<div class="grid" id="grid-nike-p6000"></div>
+
+<div class="section-divider" id="div-nike-moncler"></div>
+
+<!-- Moncler -->
+<div class="section-head" id="sec-moncler">
+  <h2>Moncler</h2>
+  <span>Swipe or click arrows to see all angles — €120</span>
+</div>
+<div class="grid" id="grid-moncler"></div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal-wrap">
+    <button class="modal-close" id="modalClose">×</button>
+    <div class="modal">
+      <div style="display:flex;flex-direction:column;">
+        <div class="modal-slideshow">
+          <div class="modal-slides" id="modalSlides"></div>
+          <button class="modal-arrow prev" id="mPrev">&#8592;</button>
+          <button class="modal-arrow next" id="mNext">&#8594;</button>
+          <div class="modal-dots" id="modalDots"></div>
+        </div>
+        <div class="modal-thumbs" id="modalThumbs"></div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-cat" id="modalCat"></div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-colour" id="modalColour"></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-divider"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-cta">Screenshot this and send it to us on Snapchat — we'll sort your size and delivery from there.</div>
+        <a class="modal-snap" href="https://www.snapchat.com/add/drip_supply27" target="_blank">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 2c-1.417.007-4.265.392-5.9 3.063-.626 1.04-.526 2.8-.476 3.896l-.003.108c-.3.092-.64.137-1.018.137-.356 0-.706-.094-.985-.26-.073-.044-.148-.065-.224-.065-.2 0-.38.144-.418.346-.05.266.13.496.376.578.063.021.134.041.208.062.474.134 1.192.335 1.354 1.105.022.103.03.207.03.31 0 .31-.096.62-.274.894l-.026.038c-.65 1.014-1.73 1.623-2.9 1.623-.178 0-.352-.015-.52-.044-.117-.021-.235.041-.284.148-.05.109-.016.236.082.31 1.01.76 2.14 1.018 3.32 1.252.11.373.265.9.07 1.373-.07.17-.015.368.133.473.05.035.107.053.165.053.07 0 .138-.024.194-.07.41-.33.81-.5 1.186-.5.26 0 .498.07.762.162.424.147.956.33 1.736.33.75 0 1.248-.176 1.66-.316.278-.098.518-.18.792-.18.37 0 .77.168 1.19.5.056.044.123.067.192.067a.25.25 0 0 0 .166-.053c.15-.105.203-.303.134-.473-.195-.473-.04-1 .07-1.373 1.18-.234 2.31-.492 3.32-1.252.098-.074.132-.2.082-.31-.05-.107-.167-.169-.285-.148-.167.029-.34.044-.52.044-1.17 0-2.248-.61-2.898-1.623l-.026-.038c-.178-.274-.275-.584-.275-.894 0-.103.01-.207.03-.31.163-.77.88-.97 1.355-1.105.074-.02.145-.04.208-.062.246-.082.426-.312.376-.578-.038-.202-.218-.346-.418-.346-.076 0-.15.021-.224.065-.28.166-.63.26-.985.26-.378 0-.718-.045-1.018-.137l-.003-.108c.05-1.096.15-2.856-.476-3.896C16.283 2.392 13.435 2.007 12.017 2z"/></svg>
+          Order via Snapchat — @drip_supply27
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">DRIP SUPPLY 27</div>
+  <div class="footer-note">Screenshot your pick · Message us on Snapchat · We handle the rest</div>
+  <div class="footer-socials">
+    <a class="tiktok-btn" href="https://www.tiktok.com/@drip_supply27" target="_blank" style="font-size:12px;padding:7px 14px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.79 1.52V6.75a4.85 4.85 0 0 1-1.02-.06z"/></svg>
+      @drip_supply27
+    </a>
+    <a class="snap-btn" href="https://www.snapchat.com/add/drip_supply27" target="_blank" style="font-size:12px;padding:7px 14px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 2c-1.417.007-4.265.392-5.9 3.063-.626 1.04-.526 2.8-.476 3.896l-.003.108c-.3.092-.64.137-1.018.137-.356 0-.706-.094-.985-.26-.073-.044-.148-.065-.224-.065-.2 0-.38.144-.418.346-.05.266.13.496.376.578.063.021.134.041.208.062.474.134 1.192.335 1.354 1.105.022.103.03.207.03.31 0 .31-.096.62-.274.894l-.026.038c-.65 1.014-1.73 1.623-2.9 1.623-.178 0-.352-.015-.52-.044-.117-.021-.235.041-.284.148-.05.109-.016.236.082.31 1.01.76 2.14 1.018 3.32 1.252.11.373.265.9.07 1.373-.07.17-.015.368.133.473.05.035.107.053.165.053.07 0 .138-.024.194-.07.41-.33.81-.5 1.186-.5.26 0 .498.07.762.162.424.147.956.33 1.736.33.75 0 1.248-.176 1.66-.316.278-.098.518-.18.792-.18.37 0 .77.168 1.19.5.056.044.123.067.192.067a.25.25 0 0 0 .166-.053c.15-.105.203-.303.134-.473-.195-.473-.04-1 .07-1.373 1.18-.234 2.31-.492 3.32-1.252.098-.074.132-.2.082-.31-.05-.107-.167-.169-.285-.148-.167.029-.34.044-.52.044-1.17 0-2.248-.61-2.898-1.623l-.026-.038c-.178-.274-.275-.584-.275-.894 0-.103.01-.207.03-.31.163-.77.88-.97 1.355-1.105.074-.02.145-.04.208-.062.246-.082.426-.312.376-.578-.038-.202-.218-.346-.418-.346-.076 0-.15.021-.224.065-.28.166-.63.26-.985.26-.378 0-.718-.045-1.018-.137l-.003-.108c.05-1.096.15-2.856-.476-3.896C16.283 2.392 13.435 2.007 12.017 2z"/></svg>
+      @drip_supply27
+    </a>
+  </div>
+</footer>
+
+<script>
+const SNAP = "https://www.snapchat.com/add/drip_supply27";
+const TIKTOK = "https://www.tiktok.com/@drip_supply27";
+
+const products = {
+  b30: [
+    { id:"b30-1", name:"Balenciaga B30", colour:"Black", price:"€80", badge:"new",
+      desc:"Balenciaga B30 trainer in all-black colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/eec35d52/20250519/i1747639710822_9809_0_0.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639719197_8078_0_1.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639710997_2886_0_2.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639711029_3811_0_3.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639711071_9213_0_4.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639718187_2464_0_5.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639716897_6236_0_6.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639711043_831_0_7.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639719986_4578_0_8.jpg"]},
+    { id:"b30-2", name:"Balenciaga B30", colour:"Black & White", price:"€80", badge:"new",
+      desc:"Balenciaga B30 trainer in black and white colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/eec35d52/20250519/i1747639497070_3727_0_0.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639497003_189_0_1.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639499718_251_0_2.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639499804_7030_0_3.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639499822_656_0_4.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639499877_510_0_5.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639497317_9606_0_6.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639497217_2914_0_7.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639497172_4039_0_8.jpg"]},
+    { id:"b30-3", name:"Balenciaga B30", colour:"Grey", price:"€80", badge:"new",
+      desc:"Balenciaga B30 trainer in grey colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/eec35d52/20250519/i1747639915062_9176_0_0.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639911169_8317_0_1.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639911243_1145_0_2.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639910672_7155_0_3.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639914947_4804_0_4.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639911149_6630_0_5.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639915040_2387_0_6.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639914819_5573_0_7.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747639910616_7652_0_8.jpg"]},
+    { id:"b30-4", name:"Balenciaga B30", colour:"Grey & Black", price:"€80", badge:"new",
+      desc:"Balenciaga B30 trainer in grey and black colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/eec35d52/20250519/i1747640015566_8893_0_0.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640015275_7512_0_1.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640006092_5300_0_2.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640015572_7300_0_3.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640006049_8226_0_4.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640006048_9342_0_5.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640005995_1884_0_6.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640016015_9064_0_7.jpg","https://xcimg.szwego.com/img/eec35d52/20250519/i1747640006276_9234_0_8.jpg"]},
+    { id:"b30-5", name:"Balenciaga B30", colour:"Dark Grey & White", price:"€80", badge:"new",
+      desc:"Balenciaga B30 trainer in dark grey and white colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275584288_2175_0_0.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275583957_1138_0_1.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275583789_2315_0_2.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275584125_1292_0_3.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275584806_6483_0_4.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275585127_8543_0_5.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275584603_4611_0_6.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275584961_7504_0_8.jpg","https://xcimg.szwego.com/img/0e5deeb1/20241227/i1735275584453_5877_0_7.jpg"]}
+  ],
+  b22: [
+    { id:"b22-1", name:"Balenciaga B22", colour:"Black", price:"€80", badge:"new",
+      desc:"Balenciaga B22 trainer in all-black colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/04e420a5/20250328/a1743107421726_0886.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107421977_6413.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107421925_6382.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107421500_8027.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107421716_7282.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107421822_3887.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107424001_8008.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107423830_3117.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107424025_4380.jpg"]},
+    { id:"b22-2", name:"Balenciaga B22", colour:"White", price:"€80", badge:"new",
+      desc:"Balenciaga B22 trainer in all-white colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/04e420a5/20250328/a1743107661519_3823.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107661525_8351.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107661397_4815.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107661345_5876.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107661349_7440.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107661636_5322.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107663384_5603.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107663350_5550.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107663391_8275.jpg"]},
+    { id:"b22-3", name:"Balenciaga B22", colour:"White & Black", price:"€80", badge:"new",
+      desc:"Balenciaga B22 trainer in white and black colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/04e420a5/20250328/a1743107542105_2087.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107542243_7712.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107541881_0220.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107542214_6025.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107542126_1281.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107541961_5617.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107544189_6741.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107544328_8743.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107544134_6053.jpg"]},
+    { id:"b22-4", name:"Balenciaga B22", colour:"Grey & White", price:"€80", badge:"new",
+      desc:"Balenciaga B22 trainer in grey and white colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/04e420a5/20250328/a1743107776995_0584.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107776822_7153.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107776764_2276.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107776549_8578.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107776785_0665.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107776667_3130.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107778952_2283.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107779016_8544.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107778996_0577.jpg"]},
+    { id:"b22-5", name:"Balenciaga B22", colour:"Light Blue", price:"€80", badge:"new",
+      desc:"Balenciaga B22 trainer in light blue colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680466344_9108_0_0.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680464990_2567_0_1.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680464990_4641_0_2.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680464990_2588_0_3.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680466311_4636_0_4.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680466366_493_0_5.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680466419_1706_0_6.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680466421_6684_0_7.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680464990_6671_0_9.jpg","https://xcimg.szwego.com/img/c7e822b8/20250216/i1739680464999_8664_0_8.jpg"]},
+    { id:"b22-6", name:"Balenciaga B22", colour:"Black & White", price:"€80", badge:"new",
+      desc:"Balenciaga B22 trainer in black and white colourway. Available in full sizes — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/04e420a5/20250328/a1743107381058_6530.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107380656_3431.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107380907_7576.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107380943_0123.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107380710_6512.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107380717_7715.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107382756_5078.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107382616_4684.jpg","https://xcimg.szwego.com/img/04e420a5/20250328/a1743107382777_5214.jpg"]}
+  ],
+  "canada-goose": [
+    { id:"cg-1", name:"Canada Goose Crofton", colour:"Black", price:"€110", badge:"new",
+      desc:"Canada Goose Crofton jacket in black. Lightweight, packable and built for the cold. Message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/4d18e610/20251025/i1761382256132_4849_0_0.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382256184_7395_0_1.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382251026_3637_0_3.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382256165_131_0_4.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382256166_8426_0_5.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382250898_8145_0_6.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382263051_2422_0_7.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382262840_3410_0_8.jpg"]},
+    { id:"cg-2", name:"Canada Goose Crofton", colour:"Navy", price:"€110", badge:"new",
+      desc:"Canada Goose Crofton jacket in navy. Lightweight, packable and built for the cold. Message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/4d18e610/20251025/i1761382255652_3463_0_0.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382255568_7787_0_1.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382255292_7422_0_3.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382241277_5941_0_4.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382255547_1814_0_5.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382241205_6757_0_6.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382241284_7862_0_7.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382240963_2159_0_8.jpg"]},
+    { id:"cg-3", name:"Canada Goose Crofton", colour:"White", price:"€110", badge:"new",
+      desc:"Canada Goose Crofton jacket in white. Lightweight, packable and built for the cold. Message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/4d18e610/20251025/i1761382271754_643_0_0.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382266174_7211_0_1.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382269132_140_0_3.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382266221_1057_0_4.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382271834_549_0_5.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382266173_1912_0_6.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382269173_5120_0_7.jpg","https://xcimg.szwego.com/img/4d18e610/20251025/i1761382265758_5809_0_8.jpg"]},
+    { id:"cg-4", name:"Canada Goose Gilet", colour:"Black", price:"€110", badge:"new",
+      desc:"Canada Goose gilet vest in black. Iconic down-filled body warmer — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_9165_7.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_6993_1.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_4397_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_7073_5.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_523_4.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_3216_3.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_4351_8.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_6467_6.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738293_6632_2.jpg"]},
+    { id:"cg-5", name:"Canada Goose Gilet", colour:"White", price:"€110", badge:"new",
+      desc:"Canada Goose gilet vest in white. Iconic down-filled body warmer — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_7704_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_2329_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_4285_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_6224_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_5739_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_2025_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_7564_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_82_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738283_2955_0.jpg"]},
+    { id:"cg-6", name:"Canada Goose Gilet", colour:"Blue", price:"€110", badge:"new",
+      desc:"Canada Goose gilet vest in blue. Iconic down-filled body warmer — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_6746_1.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_7681_2.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_2897_6.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_884_3.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_7777_0.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_6_4.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_9721_5.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_7757_7.jpg","https://xcimg.szwego.com/img/dedbe6c6/20241105/i1730738345_5585_8.jpg"]}
+  ],
+  "nike-p6000": [
+    { id:"p6-1", name:"Nike P-6000", colour:"Black", price:"€75", badge:"new",
+      desc:"Nike P-6000 in all-black colourway. Retro running-inspired silhouette — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/5f720917/20250412/o_1ioito1k05f410cjr085vafre.jpeg","https://xcimg.szwego.com/img/5f720917/20250412/o_1ioito1k11rtg14us190cehr1s28f.jpeg","https://xcimg.szwego.com/img/5f720917/20250412/o_1ioito1k2i51r5l1mrg19541op0g.jpeg","https://xcimg.szwego.com/img/5f720917/20250412/o_1ioito1k34miqfhvhm1jp2ul1h.jpeg","https://xcimg.szwego.com/img/5f720917/20250412/o_1ioito1k4lbh183me85i12rt2i.jpeg","https://xcimg.szwego.com/img/5f720917/20250412/o_1ioito1k4qp0ld31ptu12kl17asj.jpeg"]},
+    { id:"p6-2", name:"Nike P-6000", colour:"White & Silver", price:"€75", badge:"new",
+      desc:"Nike P-6000 in white and silver colourway. Retro running-inspired silhouette — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3oo1q8u24r1q6r1v8nh908.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3oq1r811b0ht301l64b6oa.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3oshmq8sc1bd5qhp5ilc.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3oplb11cjo1a8j1rum11509.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3or1olguiu1c1q1jovepjb.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3ov1rdu6mk1lfl1jcp1ra8g.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3os1ggongbe5u1rsj19qcd.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3ot1mo51go51ed81plt9qe.jpeg","https://xcimg.szwego.com/img/5f720917/20250408/o_1iob1p3ou1sk93tb10on1sml1q25f.jpeg"]},
+    { id:"p6-3", name:"Nike P-6000", colour:"Black & White", price:"€75", badge:"new",
+      desc:"Nike P-6000 in black and white colourway. Retro running-inspired silhouette — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/5f720917/20250329/o_1inerlich1hcp116f1mfp87o14k18.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inerlici10nmq09101phne1b5719.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inerlicj1h36sd81r57ofbg1a.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inerlickehv86d1c5d14921qal1b.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inerlicmfkn156b1m1o1ood1v921c.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inerlicm10fp101075tarj1ljk1d.jpeg"]},
+    { id:"p6-4", name:"Nike P-6000", colour:"Grey & Black", price:"€75", badge:"new",
+      desc:"Nike P-6000 in grey and black colourway. Retro running-inspired silhouette — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/5f720917/20250228/o_1il49qc7211ptam3avjtkgora20.jpeg","https://xcimg.szwego.com/img/5f720917/20250228/o_1il49qc731orqmb41c0m1kpl1qs721.jpeg","https://xcimg.szwego.com/img/5f720917/20250228/o_1il49qc741qrt1l281os3j26rkt22.jpeg","https://xcimg.szwego.com/img/5f720917/20250228/o_1il49qc741aj05s325p11s21ood23.jpeg","https://xcimg.szwego.com/img/5f720917/20250228/o_1il49qc7510dfihq1423t4l1go924.jpeg","https://xcimg.szwego.com/img/5f720917/20250228/o_1il49qc75cu519u21nbau6ubsb25.jpeg"]},
+    { id:"p6-5", name:"Nike P-6000", colour:"White", price:"€75", badge:"new",
+      desc:"Nike P-6000 in all-white colourway. Retro running-inspired silhouette — message us on Snapchat with this screenshot and let us know your size.",
+      images:["https://xcimg.szwego.com/img/5f720917/20250329/o_1inh2eml4qek1aq61pdeus31oskd.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inh2eml710eer8k1hdg13bpnv2e.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inh2eml8cen1jmrtge1bnr1j7gf.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inh2eml9rjm1elv1a3o4teifdg.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inh2emla9n61u2i14gm1dgp1a3hh.jpeg","https://xcimg.szwego.com/img/5f720917/20250329/o_1inh2emlgd2o1gmf1ci1iuj25ai.jpeg"]}
+  ],
+  "moncler": [
+    { id:"mc-1", name:"Moncler Jacket", colour:"Black", price:"€120", badge:"new",
+      desc:"Moncler jacket in black. Premium puffer jacket with signature logo badge — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/df88add9/20251229/i1766949837196_1344_0_0.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949837156_7693_0_1.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949837929_3650_0_2.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949837882_7977_0_3.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949838457_1254_0_4.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949838498_5486_0_5.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949839764_4731_0_6.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949839204_220_0_7.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949837077_3197_0_8.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949837801_3386_0_9.jpg","https://xcimg.szwego.com/img/df88add9/20251229/i1766949838472_9996_0_10.jpg"]},
+    { id:"mc-2", name:"Moncler Jacket", colour:"Black", price:"€120", badge:"new",
+      desc:"Moncler jacket in black — alternate style. Premium puffer jacket with signature logo badge — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/df88add9/20251222/i1766406597245_9236_0_0.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406596377_5156_0_1.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406598492_7669_0_2.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406597063_2127_0_3.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406595559_1200_0_4.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406597801_3763_0_5.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406596289_654_0_6.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406596336_4885_0_7.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406598504_8018_0_8.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406595665_3150_0_9.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406597174_3678_0_10.jpg","https://xcimg.szwego.com/img/df88add9/20251222/i1766406595561_9506_0_11.jpg"]},
+    { id:"mc-3", name:"Moncler Jacket", colour:"White", price:"€120", badge:"new",
+      desc:"Moncler jacket in white. Premium puffer jacket with signature logo badge — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8kjg22nbgpa3bl1i2u1.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8jolsecnacn1gnqm620.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8l1fb5b8ghmnpv21m3r2.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8luti1m3h1daa1u1a6j3.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8m17nagqipuoa1rfqn4.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8mok91t031d8c189o9gc5.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8n1ju1ijs185f1i6t1aqe6.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8o1p83nog11401acd2k47.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8o1ida1jo44pddar1l948.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8pk2uo2ckk3oic188f9.jpeg"]},
+    { id:"mc-4", name:"Moncler Down Jacket", colour:"Black", price:"€120", badge:"new",
+      desc:"Moncler down jacket in black. Heavyweight insulated puffer built for winter — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p73u14h5r8916qomh19281.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p73v10nfgfvkevl1p1sf92.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p740j2e13271qh1nb61u2f3.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p741ci61t5ic937r55do4.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p74214i4ql41s0u1nspmd15.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7431gkl1nalke71o7r9b6.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7451tu81fr4m6t3va1ua07.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7472qirj21bq6aic13np8.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p74818nhv8o3s010mf1rb19.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7491piqlupc2d17av1l1oa.jpeg"]},
+    { id:"mc-5", name:"Moncler Down Jacket", colour:"White", price:"€120", badge:"new",
+      desc:"Moncler down jacket in white. Heavyweight insulated puffer built for winter — message us on Snapchat with this screenshot for sizing.",
+      images:["https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oec813okjjhn2ikn0rka1.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oec9qk3706a79m0q1i6b2.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oeca11u31of21mthp471qbt3.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecbqoc1d5r1ghc1vp41u0f4.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecb8du19ajjvb17fo1ltc5.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecc1hkn1jun1e4og32m6v6.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecdp7nk2aan31tfnm77.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecd1c4n1dnp1p62cke19on8.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oece1ibb1t6v1sqq1sit3dq9.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oece17uf1bs9mmm17419j0a.jpeg"]}
+  ]
+};
+
+const ALL_CATS = ["b30","b22","canada-goose","nike-p6000","moncler"];
+const cardSlides = {};
+const allProducts = ALL_CATS.flatMap(c => products[c]);
+
+function snapSVG(s){return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 2c-1.417.007-4.265.392-5.9 3.063-.626 1.04-.526 2.8-.476 3.896l-.003.108c-.3.092-.64.137-1.018.137-.356 0-.706-.094-.985-.26-.073-.044-.148-.065-.224-.065-.2 0-.38.144-.418.346-.05.266.13.496.376.578.063.021.134.041.208.062.474.134 1.192.335 1.354 1.105.022.103.03.207.03.31 0 .31-.096.62-.274.894l-.026.038c-.65 1.014-1.73 1.623-2.9 1.623-.178 0-.352-.015-.52-.044-.117-.021-.235.041-.284.148-.05.109-.016.236.082.31 1.01.76 2.14 1.018 3.32 1.252.11.373.265.9.07 1.373-.07.17-.015.368.133.473.05.035.107.053.165.053.07 0 .138-.024.194-.07.41-.33.81-.5 1.186-.5.26 0 .498.07.762.162.424.147.956.33 1.736.33.75 0 1.248-.176 1.66-.316.278-.098.518-.18.792-.18.37 0 .77.168 1.19.5.056.044.123.067.192.067a.25.25 0 0 0 .166-.053c.15-.105.203-.303.134-.473-.195-.473-.04-1 .07-1.373 1.18-.234 2.31-.492 3.32-1.252.098-.074.132-.2.082-.31-.05-.107-.167-.169-.285-.148-.167.029-.34.044-.52.044-1.17 0-2.248-.61-2.898-1.623l-.026-.038c-.178-.274-.275-.584-.275-.894 0-.103.01-.207.03-.31.163-.77.88-.97 1.355-1.105.074-.02.145-.04.208-.062.246-.082.426-.312.376-.578-.038-.202-.218-.346-.418-.346-.076 0-.15.021-.224.065-.28.166-.63.26-.985.26-.378 0-.718-.045-1.018-.137l-.003-.108c.05-1.096.15-2.856-.476-3.896C16.283 2.392 13.435 2.007 12.017 2z"/></svg>`;}
+
+function buildCard(p) {
+  cardSlides[p.id] = 0;
+  return `<div class="product-card" id="card-${p.id}">
+    <div class="slideshow" id="ss-${p.id}">
+      <div class="slides" id="slides-${p.id}">
+        ${p.images.map(img=>`<div class="slide"><img src="${img}" alt="${p.name} ${p.colour}" loading="lazy"></div>`).join("")}
+      </div>
+      <button class="slide-arrow prev" onclick="event.stopPropagation();changeSlide('${p.id}',-1)">&#8592;</button>
+      <button class="slide-arrow next" onclick="event.stopPropagation();changeSlide('${p.id}',1)">&#8594;</button>
+      <div class="slide-dots" id="dots-${p.id}">${p.images.map((_,i)=>`<div class="dot${i===0?' active':''}"></div>`).join("")}</div>
+      <div class="slide-counter" id="counter-${p.id}">1 / ${p.images.length}</div>
+      ${p.badge==="new"?'<div class="new-badge">New</div>':""}
+    </div>
+    <div class="card-info" onclick="openModal('${p.id}')">
+      <div class="card-top"><div class="card-name">${p.name}</div><div class="card-price">${p.price}</div></div>
+      <div class="card-colour">${p.colour}</div>
+      <a class="card-order-btn" href="${SNAP}" target="_blank" onclick="event.stopPropagation()">${snapSVG(14)} Order via Snapchat</a>
+    </div>
+  </div>`;
+}
+
+function renderAll() {
+  ALL_CATS.forEach(cat => {
+    document.getElementById(`grid-${cat}`).innerHTML = products[cat].map(buildCard).join("");
+  });
+  allProducts.forEach(p => addSwipe(`ss-${p.id}`, dir => changeSlide(p.id, dir)));
+}
+
+function changeSlide(id, dir) {
+  const p = allProducts.find(x=>x.id===id);
+  let idx = (cardSlides[id] + dir + p.images.length) % p.images.length;
+  cardSlides[id] = idx;
+  document.getElementById(`slides-${id}`).style.transform = `translateX(-${idx*100}%)`;
+  document.querySelectorAll(`#dots-${id} .dot`).forEach((d,i)=>d.classList.toggle("active",i===idx));
+  document.getElementById(`counter-${id}`).textContent = `${idx+1} / ${p.images.length}`;
+}
+
+// Divider IDs for show/hide
+const dividers = {
+  "b30":    ["div-b30-b22"],
+  "b22":    ["div-b30-b22","div-b22-cg"],
+  "canada-goose": ["div-b22-cg","div-cg-nike"],
+  "nike-p6000":   ["div-cg-nike","div-nike-moncler"],
+  "moncler":      ["div-nike-moncler"]
+};
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const cat = btn.dataset.cat;
+
+    ALL_CATS.forEach(sec => {
+      const show = cat==="all" || cat===sec;
+      document.getElementById(`grid-${sec}`).style.display = show ? "grid" : "none";
+      document.getElementById(`sec-${sec}`).style.display = show ? "flex" : "none";
+    });
+
+    // Handle dividers
+    ["div-b30-b22","div-b22-cg","div-cg-nike","div-nike-moncler"].forEach(id => {
+      document.getElementById(id).style.display = cat==="all" ? "block" : "none";
+    });
+
+    if(cat !== "all") {
+      setTimeout(() => document.getElementById(`sec-${cat}`).scrollIntoView({behavior:"smooth",block:"start"}), 50);
+    }
+  });
+});
+
+let modalIdx=0, modalProduct=null;
+
+function openModal(id) {
+  modalProduct = allProducts.find(x=>x.id===id);
+  modalIdx = cardSlides[id]||0;
+  document.getElementById("modalCat").textContent = modalProduct.name.toUpperCase();
+  document.getElementById("modalName").textContent = modalProduct.colour;
+  document.getElementById("modalColour").textContent = modalProduct.name;
+  document.getElementById("modalPrice").textContent = modalProduct.price;
+  document.getElementById("modalDesc").textContent = modalProduct.desc;
+  document.getElementById("modalSlides").innerHTML = modalProduct.images.map(img=>`<div class="modal-slide"><img src="${img}" alt="${modalProduct.name}" loading="lazy"></div>`).join("");
+  document.getElementById("modalThumbs").innerHTML = modalProduct.images.map((img,i)=>`<div class="thumb${i===modalIdx?' active':''}" onclick="setModalSlide(${i})"><img src="${img}" alt=""></div>`).join("");
+  document.getElementById("modalDots").innerHTML = modalProduct.images.map((_,i)=>`<div class="dot${i===modalIdx?' active':''}"></div>`).join("");
+  setModalSlide(modalIdx,true);
+  document.getElementById("modalBg").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function setModalSlide(idx,instant) {
+  modalIdx=idx;
+  const sl=document.getElementById("modalSlides");
+  if(instant){sl.style.transition="none";setTimeout(()=>sl.style.transition="",10);}
+  sl.style.transform=`translateX(-${idx*100}%)`;
+  document.querySelectorAll("#modalDots .dot").forEach((d,i)=>d.classList.toggle("active",i===idx));
+  document.querySelectorAll(".thumb").forEach((t,i)=>{t.classList.toggle("active",i===idx);if(i===idx)t.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});});
+}
+
+document.getElementById("mPrev").onclick=()=>setModalSlide((modalIdx-1+modalProduct.images.length)%modalProduct.images.length);
+document.getElementById("mNext").onclick=()=>setModalSlide((modalIdx+1)%modalProduct.images.length);
+document.getElementById("modalClose").onclick=closeModal;
+document.getElementById("modalBg").onclick=e=>{if(e.target===document.getElementById("modalBg"))closeModal();};
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeModal();
+  if(e.key==="ArrowLeft"&&modalProduct)setModalSlide((modalIdx-1+modalProduct.images.length)%modalProduct.images.length);
+  if(e.key==="ArrowRight"&&modalProduct)setModalSlide((modalIdx+1)%modalProduct.images.length);
+});
+function closeModal(){document.getElementById("modalBg").classList.remove("open");document.body.style.overflow="";}
+
+function addSwipe(elId,cb){
+  const el=document.getElementById(elId);if(!el)return;
+  let sx=0;
+  el.addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true});
+  el.addEventListener("touchend",e=>{const d=sx-e.changedTouches[0].clientX;if(Math.abs(d)>40)cb(d>0?1:-1);},{passive:true});
+}
+addSwipe("modalSlides",dir=>setModalSlide((modalIdx+dir+modalProduct.images.length)%modalProduct.images.length));
+
+renderAll();
+</script>
+</body>
+</html>
