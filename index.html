@@ -42,7 +42,6 @@ nav { position:sticky; top:0; z-index:100; background:var(--white); border-botto
 .section-head h2 { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:2px; }
 .section-head span { font-size:11px; color:var(--mid); font-weight:300; }
 
-/* GRID — always 2 columns, no exceptions */
 .grid {
   padding:12px 4vw 16px;
   display:grid;
@@ -52,10 +51,8 @@ nav { position:sticky; top:0; z-index:100; background:var(--white); border-botto
 @media(min-width:640px){ .grid { grid-template-columns:repeat(3,1fr); gap:14px; } }
 @media(min-width:900px){ .grid { grid-template-columns:repeat(4,1fr); gap:18px; } }
 
-/* CARD */
 .product-card { background:var(--white); border:1px solid var(--gray); border-radius:8px; overflow:hidden; }
 
-/* SLIDESHOW — square ratio, full image always visible */
 .slideshow { position:relative; width:100%; aspect-ratio:1/1; overflow:hidden; background:#efefed; }
 .slides { display:flex; width:100%; height:100%; transition:transform .3s ease; will-change:transform; }
 .slide { min-width:100%; width:100%; height:100%; flex-shrink:0; }
@@ -67,7 +64,6 @@ nav { position:sticky; top:0; z-index:100; background:var(--white); border-botto
   object-position:center 30%;
 }
 
-/* arrows: always visible on mobile */
 .slide-arrow {
   position:absolute; top:50%; transform:translateY(-50%);
   background:rgba(255,255,255,.88); border:none; border-radius:50%;
@@ -89,7 +85,6 @@ nav { position:sticky; top:0; z-index:100; background:var(--white); border-botto
 .slide-counter { position:absolute; top:6px; right:6px; background:rgba(0,0,0,.38); color:#fff; font-size:9px; padding:2px 6px; border-radius:999px; z-index:10; letter-spacing:.3px; }
 .new-badge { position:absolute; top:6px; left:6px; background:var(--yellow); color:#000; font-size:8px; letter-spacing:.8px; text-transform:uppercase; padding:3px 7px; border-radius:999px; font-weight:700; z-index:10; }
 
-/* CARD INFO */
 .card-info { padding:8px 10px 12px; cursor:pointer; }
 .card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2px; gap:4px; }
 .card-name { font-size:12px; font-weight:500; line-height:1.3; }
@@ -97,7 +92,6 @@ nav { position:sticky; top:0; z-index:100; background:var(--white); border-botto
 .card-colour { font-size:10px; color:var(--mid); font-weight:300; text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
 .card-order-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:5px; background:var(--yellow); color:#000; border:none; border-radius:999px; padding:8px 6px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:500; cursor:pointer; text-decoration:none; }
 
-/* MODAL */
 .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:300; align-items:center; justify-content:center; padding:10px; }
 .modal-bg.open { display:flex; }
 .modal-wrap { position:relative; width:100%; max-width:960px; }
@@ -175,6 +169,8 @@ footer { border-top:1px solid var(--gray); padding:20px 4vw; display:flex; align
   <button class="filter-btn" data-cat="canada-goose">Canada Goose</button>
   <button class="filter-btn" data-cat="nike-p6000">Nike P-6000</button>
   <button class="filter-btn" data-cat="moncler">Moncler</button>
+  <button class="filter-btn" data-cat="asics">Asics Gel</button>
+  <button class="filter-btn" data-cat="yeezy">Yeezy</button>
 </div>
 
 <div class="section-head" id="sec-b30"><h2>Balenciaga B30</h2><span>€80 — swipe for all angles</span></div>
@@ -195,6 +191,14 @@ footer { border-top:1px solid var(--gray); padding:20px 4vw; display:flex; align
 
 <div class="section-head" id="sec-moncler"><h2>Moncler</h2><span>€120 — swipe for all angles</span></div>
 <div class="grid" id="grid-moncler"></div>
+<div class="section-divider" id="div-moncler-asics"></div>
+
+<div class="section-head" id="sec-asics"><h2>Asics Gel</h2><span>€75 — swipe for all angles</span></div>
+<div class="grid" id="grid-asics"></div>
+<div class="section-divider" id="div-asics-yeezy"></div>
+
+<div class="section-head" id="sec-yeezy"><h2>Yeezy</h2><span>€80 — swipe for all angles</span></div>
+<div class="grid" id="grid-yeezy"></div>
 
 <div class="modal-bg" id="modalBg">
   <div class="modal-wrap">
@@ -280,10 +284,22 @@ const products = {
     {id:"mc-3",name:"Moncler Jacket",colour:"White",price:"€120",badge:"new",desc:"Moncler jacket in white. Premium puffer with signature logo — message us on Snapchat for sizing.",images:["https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8kjg22nbgpa3bl1i2u1.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8jolsecnacn1gnqm620.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8l1fb5b8ghmnpv21m3r2.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8luti1m3h1daa1u1a6j3.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8m17nagqipuoa1rfqn4.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8mok91t031d8c189o9gc5.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8n1ju1ijs185f1i6t1aqe6.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8o1p83nog11401acd2k47.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8o1ida1jo44pddar1l948.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251030/o_1j8orfi8pk2uo2ckk3oic188f9.jpeg"]},
     {id:"mc-4",name:"Moncler Down Jacket",colour:"Black",price:"€120",badge:"new",desc:"Moncler down jacket in black. Heavyweight insulated puffer — message us on Snapchat for sizing.",images:["https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p73u14h5r8916qomh19281.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p73v10nfgfvkevl1p1sf92.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p740j2e13271qh1nb61u2f3.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p741ci61t5ic937r55do4.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p74214i4ql41s0u1nspmd15.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7431gkl1nalke71o7r9b6.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7451tu81fr4m6t3va1ua07.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7472qirj21bq6aic13np8.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p74818nhv8o3s010mf1rb19.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0p7491piqlupc2d17av1l1oa.jpeg"]},
     {id:"mc-5",name:"Moncler Down Jacket",colour:"White",price:"€120",badge:"new",desc:"Moncler down jacket in white. Heavyweight insulated puffer — message us on Snapchat for sizing.",images:["https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oec813okjjhn2ikn0rka1.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oec9qk3706a79m0q1i6b2.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oeca11u31of21mthp471qbt3.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecbqoc1d5r1ghc1vp41u0f4.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecb8du19ajjvb17fo1ltc5.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecc1hkn1jun1e4og32m6v6.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecdp7nk2aan31tfnm77.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oecd1c4n1dnp1p62cke19on8.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oece1ibb1t6v1sqq1sit3dq9.jpeg","https://xcimg.szwego.com/img/b9af7d6e/20251101/o_1j8u0oece17uf1bs9mmm17419j0a.jpeg"]}
+  ],
+  "asics":[
+    {id:"asics-1",name:"Asics Gel",colour:"Black",price:"€75",badge:"new",desc:"Asics Gel trainer in all-black colourway. Iconic cushioned runner — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/windows1773885935595_2098247933-479268712.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885936114_56070028-1906960887.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885936763_812416090637053062.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885937286_566349941-176093851.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885938002_784052358-1720385796.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885938673_1959554457236713254.jpg"]},
+    {id:"asics-2",name:"Asics Gel",colour:"Light Blue",price:"€75",badge:"new",desc:"Asics Gel trainer in light blue colourway. Iconic cushioned runner — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/windows1773885931252_820565276-1373732847.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885931797_1345027055-2014493897.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885932372_141161224-1295052168.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885932889_246466966421871880.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885933468_1190084782-649364607.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885934152_9886311621393082272.jpg"]},
+    {id:"asics-3",name:"Asics Gel",colour:"White",price:"€75",badge:"new",desc:"Asics Gel trainer in all-white colourway. Iconic cushioned runner — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/windows1773885999907_310879441728076800.jpg","https://xcimg.szwego.com/img/5f720917/windows1773886000464_1326077651-2034255826.jpg","https://xcimg.szwego.com/img/5f720917/windows1773886001141_3540961031345514437.jpg","https://xcimg.szwego.com/img/5f720917/windows1773886001778_2136025993-987330636.jpg","https://xcimg.szwego.com/img/5f720917/windows1773886002545_1395928728-1769699531.jpg","https://xcimg.szwego.com/img/5f720917/windows1773886003287_9108873631586623599.jpg","https://newimg.szwego.com/avatar/22a55e49437d0e05e76e72db4d3111b4.jpg"]},
+    {id:"asics-4",name:"Asics Gel",colour:"Blue & White",price:"€75",badge:"new",desc:"Asics Gel trainer in blue and white colourway. Iconic cushioned runner — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/windows1773885589246_863776947-611538589.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885589779_617710798897027267.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885590324_1142172577259716008.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885590829_1598850210133248735.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885591380_1771940098865074868.jpg","https://xcimg.szwego.com/img/5f720917/windows1773885592022_3808025131946737292.jpg"]}
+  ],
+  "yeezy":[
+    {id:"yz-1",name:"Yeezy",colour:"Black",price:"€80",badge:"new",desc:"Yeezy in all-black colourway. Boost cushioning, iconic silhouette — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kjlpm2agggk4a1d7s1bblq.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kjlq14a412ti1nuoo629nsr.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kjlq7drt8l1qi3191mhtas.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kjlrk0p6n21du2ar51snjt.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kjlsdb312ji354nou1f4ju.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kjls1s11nhar4k2oc1c35v.jpeg"]},
+    {id:"yz-2",name:"Yeezy",colour:"White",price:"€80",badge:"new",desc:"Yeezy in all-white colourway. Boost cushioning, iconic silhouette — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kr1v154415cq19sd161qp9hb.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kr20h89l1qh191m3o1m09c.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kr21j9a3378a1rjf1dfkd.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kr211npje2a5t2h8hkae.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kr22lc0qncvp3chrnc4f.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0kr2213bo1da6st41cteangg.jpeg"]},
+    {id:"yz-3",name:"Yeezy",colour:"Grey",price:"€80",badge:"new",desc:"Yeezy in grey colourway. Boost cushioning, iconic silhouette — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0jutd9a3nm1cqn1o8g1ktm11.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0juteudub9i1akfba4gqn12.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0jutf1arpums8adv0b17pn13.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0jutf2j311ifnej1fk81vq914.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0jutglp1kqf1nif4ck18s715.jpeg","https://xcimg.szwego.com/img/5f720917/20250428/o_1ips0juth1vd1g8k29u1dsh1uq616.jpeg"]},
+    {id:"yz-4",name:"Yeezy",colour:"Blue & Black",price:"€80",badge:"new",desc:"Yeezy in blue and black colourway. Boost cushioning, iconic silhouette — message us on Snapchat with your size.",images:["https://xcimg.szwego.com/img/5f720917/20250416/o_1iot4s55b149m11i53pu7e21qu41.jpeg","https://xcimg.szwego.com/img/5f720917/20250416/o_1iot4s55c1cs71tuj16cn47k7la2.jpeg","https://xcimg.szwego.com/img/5f720917/20250416/o_1iot4s55dqldde5rlerh3c013.jpeg","https://xcimg.szwego.com/img/5f720917/20250416/o_1iot4s55d1ba21iceb21109l150b4.jpeg","https://xcimg.szwego.com/img/5f720917/20250416/o_1iot4s55enicnuo19nfngp174j5.jpeg","https://xcimg.szwego.com/img/5f720917/20250416/o_1iot4s55f38lk1n1p9ukgr16g6.jpeg"]}
   ]
 };
 
-const ALL_CATS=["b30","b22","canada-goose","nike-p6000","moncler"];
+const ALL_CATS=["b30","b22","canada-goose","nike-p6000","moncler","asics","yeezy"];
 const cardSlides={};
 const allProducts=ALL_CATS.flatMap(c=>products[c]);
 
@@ -336,7 +352,7 @@ document.querySelectorAll(".filter-btn").forEach(btn=>{
       document.getElementById(`grid-${sec}`).style.display=show?"grid":"none";
       document.getElementById(`sec-${sec}`).style.display=show?"flex":"none";
     });
-    ["div-b30-b22","div-b22-cg","div-cg-nike","div-nike-moncler"].forEach(id=>{
+    ["div-b30-b22","div-b22-cg","div-cg-nike","div-nike-moncler","div-moncler-asics","div-asics-yeezy"].forEach(id=>{
       document.getElementById(id).style.display=cat==="all"?"block":"none";
     });
     if(cat!=="all")setTimeout(()=>document.getElementById(`sec-${cat}`).scrollIntoView({behavior:"smooth",block:"start"}),50);
